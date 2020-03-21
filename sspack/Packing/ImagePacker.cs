@@ -261,22 +261,28 @@ namespace sspack
 		private bool TestPackingImages(int testWidth, int testHeight, Dictionary<string, Rectangle> testImagePlacement)
 		{
 			// create the rectangle packer
-			ArevaloRectanglePacker rectanglePacker = new ArevaloRectanglePacker(testWidth, testHeight);
+			//FrankRectanglePacker rectanglePacker = new FrankRectanglePacker(testWidth, testHeight);
+
+			int square = (int)Math.Ceiling(Math.Sqrt(files.Count));
+
+			Point origin = new Point();
 
 			foreach (var image in files)
 			{
-				// get the bitmap for this file
 				Size size = imageSizes[image];
 
-				// pack the image
-				Point origin;
-				if (!rectanglePacker.TryPack(size.Width + padding, size.Height + padding, out origin))
+				if (files.IndexOf(image) % square == 0)
 				{
-					return false;
+					if (files.IndexOf(image) != 0)
+						origin.Y += size.Height;
+					origin.X = 0;
+
 				}
 
 				// add the destination rectangle to our dictionary
 				testImagePlacement.Add(image, new Rectangle(origin.X, origin.Y, size.Width + padding, size.Height + padding));
+
+				origin.X += size.Width;
 			}
 
 			return true;
